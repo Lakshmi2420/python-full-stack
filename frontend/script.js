@@ -11,6 +11,7 @@
 //   console.log(typeof result);
 //   console.log(typeof address);
 
-function changeText(){
-    document.getElementById("title").innerHTML="Hello, welcome to javaScript";
-}
+// function changeText(){
+//     document.getElementById("title").innerHTML="Hello, welcome to javaScript";
+// }
+  

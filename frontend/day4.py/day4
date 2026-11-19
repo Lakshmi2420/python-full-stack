@@ -1,0 +1,379 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+
+psql (18.7)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# CREATE DATABASE college;
+ERROR:  database "college" already exists
+postgres=# \l
+                                                                    List of databases
+   Name    |  Owner   | Encoding | Locale Provider |          Collate           |           Ctype            | Locale | ICU Rules |   Access privileges
+-----------+----------+----------+-----------------+----------------------------+----------------------------+--------+-----------+-----------------------
+ Student   | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           |
+ college   | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           |
+ postgres  | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           |
+ template0 | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres          +
+           |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+ template1 | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres          +
+           |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+(5 rows)
+
+
+postgres=# \c college
+You are now connected to database "college" as user "postgres".
+college=# CREATE TABLE student(
+college(# id SERIAL PRIMARY KEY,
+college(# name VARCHAR(100),
+college(# age INT,
+college(# course VARCHAR(50),
+college(# marks INT);
+CREATE TABLE
+college=# \c college
+You are now connected to database "college" as user "postgres".
+college=# \dt
+           List of tables
+ Schema |  Name   | Type  |  Owner
+--------+---------+-------+----------
+ public | student | table | postgres
+(1 row)
+
+
+college=#   INSERT INTO student(name,age,course,marks
+college(# )
+college-# ('lak',21,'BSC',89),
+college-# ('priya',20,'BCA',90),
+college-# ('sam',19,'BBA',68),
+college-# ('RAM',20,'BE',98);
+ERROR:  syntax error at or near "'lak'"
+LINE 3: ('lak',21,'BSC',89),
+         ^
+college=#   INSERT INTO student(name,age,course,marks)
+college-# ('NAVYA',21,'BSC',89),
+college-# ('RAM',20,'BE',98),
+college-# ('SAM',19,'BBA',68),
+college-# ('PRIYA',20,'BCA',90);
+ERROR:  syntax error at or near "'NAVYA'"
+LINE 2: ('NAVYA',21,'BSC',89),
+         ^
+college=#   INSERT INTO student(id,name,age,course,marks)
+college-# (1,'NAVYA',21,'BSC',89),
+college-# (2,'SAM',19,'BBA',68),
+college-# (3,'RAM',20,'BE',98),
+college-# (4,'PRIYA',20,'BCA',90);
+ERROR:  syntax error at or near "1"
+LINE 2: (1,'NAVYA',21,'BSC',89),
+         ^
+college=#   INSERT INTO student(id,name,age,course,marks)
+college-# VALUES
+college-# (1,'NAVYA',21,'BSC',89),
+college-# (2,'SAM',19,'BBA',68),
+college-# (3,'RAM',20,'BE',98),
+college-# (4,'PRIYA',20,'BCA',90);
+INSERT 0 4
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  1 | NAVYA |  21 | BSC    |    89
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  4 | PRIYA |  20 | BCA    |    90
+(4 rows)
+
+
+college=# WHERE marks > 80;
+ERROR:  syntax error at or near "WHERE"
+LINE 1: WHERE marks > 80;
+        ^
+college=# SELECT * FROM students
+college-# SELECT * FROM student
+college-# WHERE marks > 80;
+ERROR:  syntax error at or near "SELECT"
+LINE 2: SELECT * FROM student
+        ^
+college=# SELECT *FROM student
+college-# WHERE marks > 80;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  1 | NAVYA |  21 | BSC    |    89
+  3 | RAM   |  20 | BE     |    98
+  4 | PRIYA |  20 | BCA    |    90
+(3 rows)
+
+
+college=# SELECT * FROM student
+college-# ORDER BY marks DESC;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  3 | RAM   |  20 | BE     |    98
+  4 | PRIYA |  20 | BCA    |    90
+  1 | NAVYA |  21 | BSC    |    89
+  2 | SAM   |  19 | BBA    |    68
+(4 rows)
+
+
+college=# SELECT * FROM student
+college-# ORDER BY marks ASEN;
+ERROR:  syntax error at or near "ASEN"
+LINE 2: ORDER BY marks ASEN;
+                       ^
+college=# SELECT * FROM student
+college-# ORDER BY marks ACEN;
+ERROR:  syntax error at or near "ACEN"
+LINE 2: ORDER BY marks ACEN;
+                       ^
+college=# UPDATE student
+college-# SET marks = 92
+college-# WHERE id = 1;
+UPDATE 1
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  4 | PRIYA |  20 | BCA    |    90
+  1 | NAVYA |  21 | BSC    |    92
+(4 rows)
+
+
+college=#    UPDATE student
+college-# SET marks=90
+college-# WHERE id in (1,4);
+UPDATE 2
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  1 | NAVYA |  21 | BSC    |    90
+  4 | PRIYA |  20 | BCA    |    90
+(4 rows)
+
+
+college=# DELETE student
+college-# WHERE id=4;
+ERROR:  syntax error at or near "student"
+LINE 1: DELETE student
+               ^
+college=# DELETE FROM student WHERE id=4;
+DELETE 1
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  1 | NAVYA |  21 | BSC    |    90
+(3 rows)
+
+
+college=# limit 2;
+ERROR:  syntax error at or near "limit"
+LINE 1: limit 2;
+        ^
+college=# SELECT *FROM student
+college-# limit 2;
+ id | name | age | course | marks
+----+------+-----+--------+-------
+  2 | SAM  |  19 | BBA    |    68
+  3 | RAM  |  20 | BE     |    98
+(2 rows)
+
+
+college=# select count(*)
+college-# from student;
+ count
+-------
+     3
+(1 row)
+
+
+college=# select * from student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  1 | NAVYA |  21 | BSC    |    90
+(3 rows)
+
+
+college=# create table student_card(
+college(# card_id serial primary key,
+college(# card_number varchar(50),
+college(# id int unique references students(id)
+college(# );
+ERROR:  relation "students" does not exist
+college=# create table student_card(
+college(# card_id serial primary key,
+college(# card_number varchar(50),
+college(# id int unique references student(id)
+college(# );
+CREATE TABLE
+college=# insert into student_card(card_number,student_id)
+college-# values
+college-# ('card101',1),
+college-# ('card102',2);
+ERROR:  column "student_id" of relation "student_card" does not exist
+LINE 1: insert into student_card(card_number,student_id)
+                                             ^
+college=# insert into student_card(card_number,id)
+college-# values
+college-# ('card101',1),
+college-# ('card102',2);
+INSERT 0 2
+college=# select *from student_card;
+ card_id | card_number | id
+---------+-------------+----
+       1 | card101     |  1
+       2 | card102     |  2
+(2 rows)
+
+
+college=# INSERT INTO student(id,name,age,course,marks)
+college-# VALUES
+college-# (4,'MANU',22,'BE',90);
+INSERT 0 1
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  1 | NAVYA |  21 | BSC    |    90
+  4 | MANU  |  22 | BE     |    90
+(4 rows)
+
+
+college=# insert into student_card(card_number,id)
+college-# values
+college-# ('card104',4);
+INSERT 0 1
+college=# SELECT *FROM student;
+ id | name  | age | course | marks
+----+-------+-----+--------+-------
+  2 | SAM   |  19 | BBA    |    68
+  3 | RAM   |  20 | BE     |    98
+  1 | NAVYA |  21 | BSC    |    90
+  4 | MANU  |  22 | BE     |    90
+(4 rows)
+
+
+college=# select *from student_card;
+ card_id | card_number | id
+---------+-------------+----
+       1 | card101     |  1
+       2 | card102     |  2
+       3 | card104     |  4
+(3 rows)
+
+
+college=# DROP student_card;
+ERROR:  syntax error at or near "student_card"
+LINE 1: DROP student_card;
+             ^
+college=# DROP  FROM student_card;
+ERROR:  syntax error at or near "FROM"
+LINE 1: DROP  FROM student_card;
+              ^
+college=# DELETE student_card;
+ERROR:  syntax error at or near "student_card"
+LINE 1: DELETE student_card;
+               ^
+college=# DROP TABLE student_card;
+DROP TABLE
+college=# create table departments(
+college(# department_id serial primary key,
+college(# department_name varchar(100);
+college(# );
+ERROR:  syntax error at or near ";"
+LINE 3: department_name varchar(100);
+                                    ^
+college=# create table departments(
+college(# department_id serial primary key,
+college(# department_name varchar(100)
+college(# );
+CREATE TABLE
+college=# insert into departments (departments_name)
+college-# values
+college-# ('CSE')
+college-# ('ISE')
+college-# ('MECH')
+college-# ('AIML')
+college-# );
+ERROR:  syntax error at or near "("
+LINE 4: ('ISE')
+        ^
+college=# insert into departments (departments_name)
+college-# values
+college-# ('CSE'),
+college-# ('ISE'),
+college-# ('MECH'),
+college-# ('AIML'),
+college-# );
+ERROR:  syntax error at or near ")"
+LINE 7: );
+        ^
+college=# insert into departments (departments_name)
+college-# values
+college-# ('CSE'),
+college-# ('ISE'),
+college-# ('MECH'),
+college-# ('AIML');
+ERROR:  column "departments_name" of relation "departments" does not exist
+LINE 1: insert into departments (departments_name)
+                                 ^
+college=# insert into departments (department_name)
+college-# values
+college-# ('CSE'),
+college-# ('ISE'),
+college-# ('MECH'),
+college-# ('AIML');
+INSERT 0 4
+college=# SELECT *FROM departments
+college-# SELECT *FROM departments;
+ERROR:  syntax error at or near "SELECT"
+LINE 2: SELECT *FROM departments;
+        ^
+college=# SELECT *FROM departments;
+ department_id | department_name
+---------------+-----------------
+             1 | CSE
+             2 | ISE
+             3 | MECH
+             4 | AIML
+(4 rows)
+
+
+college=# create table employee(
+college(# employee_id serial primary key,
+college(# employee varchar(100),
+college(# salary int,
+college(# department_id int references departments(department_id)
+college(# );
+CREATE TABLE
+college=# insert into employee(employee_name,salary,department_id)
+college-# values
+college-# ('rahul',25000,2),
+college-# ('ravi',24000,3),
+college-# ('pari',30000,1);
+ERROR:  column "employee_name" of relation "employee" does not exist
+LINE 1: insert into employee(employee_name,salary,department_id)
+                             ^
+college=# insert into employee(employee,salary,department_id)
+college-# values
+college-# ('rahul',25000,2),
+college-# ('ravi',24000,3),
+college-# ('pari',30000,1);
+INSERT 0 3
+college=# select *from employee;
+ employee_id | employee | salary | department_id
+-------------+----------+--------+---------------
+           1 | rahul    |  25000 |             2
+           2 | ravi     |  24000 |             3
+           3 | pari     |  30000 |             1
+(3 rows)
+
